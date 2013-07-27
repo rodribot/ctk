@@ -1,0 +1,33 @@
+{
+	"name": "chemistryjs",
+	"author": "Rodrigo González | sapienlab",
+	"description": "The Javascript chemistry library",
+	"version" : "1.0.0",
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://opensource.org/licenses/MIT"
+		}
+	],
+	"maintainers":[{
+   		"name": "Rodrigo González",
+   		"email": "rodrigo@sapienlab.com",
+   		"web" : "http://sapienlab.com"
+	}],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/sapienlab/chemistryjs.git"
+	},
+	"keywords" : [
+		"compress",
+		"json"
+	],
+	"homepage" : "https://github.com/sapienlab/chemistryjs",
+	"readmeFilename" : "README.md",
+	"main": "./main",
+	"dojoBuild": "package.js",
+	"icon" : "https://raw.github.com/sapienlab/chemistryjs/master/icon.png",
+	"volo" : {
+		"baseDir" : "."		
+	}
+}
