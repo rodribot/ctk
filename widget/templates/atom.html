@@ -1,0 +1,31 @@
+<div class="chemistry chemistry-atom">
+	<table>
+		<tbody>
+			<tr>
+				<td data-dojo-attach-point="aNode" class="chemistry chemistry-atom-A">
+				<span data-dojo-attach-point="aInlineBox"
+				data-dojo-type="dijit/InlineEditBox"
+				data-dojo-props="editor:'dijit/form/NumberSpinner', editorParams:{constraints: {min: 1, places:0} }"
+				title="${i18n.ATOM_A}"></span></td>
+				<td data-dojo-attach-point="SymbolNode" rowspan="2" class="chemistry chemistry-atom-symbol">
+				<span data-dojo-attach-point="symbolInlineBox"
+				data-dojo-type="dijit/InlineEditBox"
+				data-dojo-props="editor:'dijit/form/FilteringSelect', editorParams:{}"
+				title="${i18n.ATOM_SYMBOL}"></span></td>
+				<td class="chemistry chemistry-atom-ionization">
+				<span data-dojo-attach-point="ionizationNode" 
+				data-dojo-attach-point="ionizationInlineEditorBox"
+				data-dojo-type="dijit/InlineEditBox"
+				data-dojo-props="editor:'dijit/form/NumberSpinner', editorParams:{constraints: {places:0} }"
+				title="${i18n.ATOM_IONIZATION}"></span></td>
+			</tr>
+			<tr>
+				<td data-dojo-attach-point="zNode" class="chemistry chemistry-atom-Z">
+				<span data-dojo-attach-point="zInlineEditorBox"
+				data-dojo-type="dijit/InlineEditBox"
+				data-dojo-props="editor:'dijit/form/NumberSpinner', editorParams:{constraints: {min: 1, places:0} }"
+				title="${i18n.ATOM_Z}"></span></td>
+			</tr>
+		</tbody>
+	</table>
+</div>

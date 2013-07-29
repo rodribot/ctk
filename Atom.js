@@ -1,38 +1,84 @@
 define(['dojo/_base/declare', // declare
  'dojo/_base/lang', // lang
  'dojo/Stateful', // Stateful
- ], function(declare, lang, Stateful) { 	
+ './dictionary/orbitals' // orbitalsDictionary
+ ], function(declare, lang, Stateful, orbitalsDictionary) { 	
 	
 	return declare(Stateful, {
 			
 		symbol : '',		
 		mass : 0,
-		electrons : 0,
-		protons : 0,
-		neutrons : 0,
+		e : 0,
+		p : 0,
+		n : 0,
 	
 		constructor : function(args) {
 			lang.mixin(this, args);
+			if(!args.e) {
+				this.e = this.p;
+			}
 		},
 		
-		/**
-		 * The principal quantum number
-		 * 
-		 * The first describes the electron shell, or energy level, of an atom.
-		 * The value of n ranges from 1 to the shell containing the outermost electron of that atom.
-		 */
-		_nGetter : function() {
-			var electronsNow = this.electrons < this.protons ? this.protons : this.protons;
-			return Math.sqrt(electronsNow) / 2;
-		},
+		computeElectronConfiguration : function() {
 		
-		/**
-		 * The azimuthal quantum number
-		 * 
-		 * ℓ The second (also known as the angular quantum number or orbital quantum number)
-		 */
-		_lGetter : function() {
-			return this.get('n') - 1;
+			if(this._cacheElectronConfiguration)
+				return this._cacheElectronConfiguration;
+			
+			var electronConfiguration = [];
+			var i = -1, orbital;
+			do {
+				++i;
+				orbital = orbitalsDictionary[i];
+				electronConfiguration.push(orbital);								
+			} while (this.e > orbital.e);
+			
+			var quantumNumberAuxiliar = {
+				ml : [],
+				ms : []
+			};
+			
+			var n = orbital.nivel;
+			var l = orbital.orbitalIndex;
+
+			var distributedElectrons = this.e - orbitalsDictionary[i - 1 < 0 ? 0 : i - 1].e;
+			i = -l;
+			
+			var lastElectronIndex = 0;	
+			while(i <= l) {		
+				if(distributedElectrons > 0) {
+					quantumNumberAuxiliar.ms.push(1);
+					++lastElectronIndex;	
+					--distributedElectrons;
+				} else {
+					quantumNumberAuxiliar.ms.push(0);
+				}
+				quantumNumberAuxiliar.ml.push(i++);				
+			}
+			if(distributedElectrons > 0) {
+				lastElectronIndex = 0;
+			 	while(distributedElectrons > 0) {
+					quantumNumberAuxiliar.ms[lastElectronIndex]++;
+					++lastElectronIndex;
+					--distributedElectrons;
+				}				
+			}		
+			
+			--lastElectronIndex;				
+			
+			quantumNumberAuxiliar.lastElectronIndex = lastElectronIndex;
+			
+			this._cacheElectronConfiguration = {
+				electronConfiguration : electronConfiguration,
+				quantumNumberAuxiliar : quantumNumberAuxiliar,
+				n : n,
+				l : l,
+				lLetter : orbital.orbital,
+				ml : quantumNumberAuxiliar.ml[lastElectronIndex],
+				ms : quantumNumberAuxiliar.ms[lastElectronIndex] > 1 ? -0.5 : +0.5				
+			};
+			
+			return this._cacheElectronConfiguration;
+			
 		},
 		
 		_AGetter : function() {
@@ -40,11 +86,20 @@ define(['dojo/_base/declare', // declare
 		},
 		
 		_ASetter : function(A) {
-			this.set('neutrons', A - this.protons);
+			this.set('n', A - this.protons);
 		},
 		
 		_ZGetter : function() {
 			return this.p;
+		},
+		
+		_ZSetter : function(Z) {
+			this.set('p', Z);
+		},
+		
+		_pSetter : function(p) {
+			this.p = p;
+			delete this._cacheElectronConfiguration;
 		},
 		
 		_ionizationGetter : function() {
@@ -52,9 +107,9 @@ define(['dojo/_base/declare', // declare
 		},
 		
 		isIsotope : function(atom) {
-			return this.protons == atom.protons
-				&& this.electrons == atom.electrons
-				&& this.neutrons != atom.neutrons
+			return this.p == atom.p
+				&& this.e == atom.e
+				&& this.n != atom.n
 		}
 		
 	});
