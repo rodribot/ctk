@@ -1,0 +1,25 @@
+.chemistry {
+	padding: 5px;
+	background-color: #FFFFDD;
+	border-spacing: 0;
+	/*border: 1px solid #DDDD99;*/	
+}
+
+.chemistry-atom-symbol {
+	font-size: 200%;
+	width: 40px;
+}
+
+.chemistry-atom-Z, .chemistry-atom-A {
+	width: 30px;
+	text-align: right;
+}
+
+.chemistry-atom-ionization {
+	width: 30px;
+	text-align: left;
+}
+
+.chemistry td span {
+	width : 100%;
+}
