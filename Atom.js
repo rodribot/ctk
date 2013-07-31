@@ -1,8 +1,9 @@
 define(['dojo/_base/declare', // declare
  'dojo/_base/lang', // lang
+ './Orbital', // Orbital
  'dojo/Stateful', // Stateful
  './dictionary/orbitals' // orbitalsDictionary
- ], function(declare, lang, Stateful, orbitalsDictionary) { 	
+ ], function(declare, lang, Orbital, Stateful, orbitalsDictionary) { 	
 	
 	return declare(Stateful, {
 			
@@ -13,14 +14,14 @@ define(['dojo/_base/declare', // declare
 		n : 0,
 	
 		constructor : function(args) {
+			args = args || {};
 			lang.mixin(this, args);
-			if(!args.e) {
-				this.e = this.p;
-			}
+			this.p = args.p || 1;
+			this.e = args.e || this.p;
+			this.symbol = args.symbol || 'H';
 		},
 		
-		computeElectronConfiguration : function() {
-		
+		computeElectronConfiguration : function() {		
 			if(this._cacheElectronConfiguration)
 				return this._cacheElectronConfiguration;
 			
@@ -29,64 +30,19 @@ define(['dojo/_base/declare', // declare
 			do {
 				++i;
 				orbital = orbitalsDictionary[i];
-				electronConfiguration.push(orbital);								
+				electronConfiguration.push(new Orbital(orbital));								
 			} while (this.e > orbital.e);
 			
-			var quantumNumberAuxiliar = {
-				ml : [],
-				ms : []
-			};
-			
-			var n = orbital.nivel;
-			var l = orbital.orbitalIndex;
-
-			var distributedElectrons = this.e - orbitalsDictionary[i - 1 < 0 ? 0 : i - 1].e;
-			i = -l;
-			
-			var lastElectronIndex = 0;	
-			while(i <= l) {		
-				if(distributedElectrons > 0) {
-					quantumNumberAuxiliar.ms.push(1);
-					++lastElectronIndex;	
-					--distributedElectrons;
-				} else {
-					quantumNumberAuxiliar.ms.push(0);
-				}
-				quantumNumberAuxiliar.ml.push(i++);				
-			}
-			if(distributedElectrons > 0) {
-				lastElectronIndex = 0;
-			 	while(distributedElectrons > 0) {
-					quantumNumberAuxiliar.ms[lastElectronIndex]++;
-					++lastElectronIndex;
-					--distributedElectrons;
-				}				
-			}		
-			
-			--lastElectronIndex;				
-			
-			quantumNumberAuxiliar.lastElectronIndex = lastElectronIndex;
-			
-			this._cacheElectronConfiguration = {
-				electronConfiguration : electronConfiguration,
-				quantumNumberAuxiliar : quantumNumberAuxiliar,
-				n : n,
-				l : l,
-				lLetter : orbital.orbital,
-				ml : quantumNumberAuxiliar.ml[lastElectronIndex],
-				ms : quantumNumberAuxiliar.ms[lastElectronIndex] > 1 ? -0.5 : +0.5				
-			};
-			
-			return this._cacheElectronConfiguration;
-			
-		},
+			this._cacheElectronConfiguration = electronConfiguration;			
+			return this._cacheElectronConfiguration;			
+		},			
 		
 		_AGetter : function() {
-			return this.protons + this.neutrons;
+			return this.p + this.n;
 		},
 		
 		_ASetter : function(A) {
-			this.set('n', A - this.protons);
+			this.set('n', A - this.p);
 		},
 		
 		_ZGetter : function() {
@@ -107,9 +63,11 @@ define(['dojo/_base/declare', // declare
 		},
 		
 		isIsotope : function(atom) {
-			return this.p == atom.p
-				&& this.e == atom.e
-				&& this.n != atom.n
+			return this.p == atom.p && this.n != atom.n
+		},
+		
+		isIsobar : function(atom) {
+			return this.p != atom.p && this.n == atom.n;
 		}
 		
 	});

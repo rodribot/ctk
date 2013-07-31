@@ -1,7 +1,8 @@
 define(['dojo/_base/declare', // declare
 'dojo/_base/lang', // lang
 'dojo/aspect', // aspect
-'dojo/on', // on
+'dojo/Stateful', // Stateful
+'../Atom', // Atom
 'dojo/data/ObjectStore', // ObjectStore
 'dojo/i18n!../nls/base.js',
 '../dictionary/atomStore', // atomStore
@@ -11,59 +12,80 @@ define(['dojo/_base/declare', // declare
 'dijit/_WidgetsInTemplateMixin', // _WidgetsInTemplateMixin
 'dojo/text!./templates/atom.html', // template
 'dijit/InlineEditBox', // InlineEditBox 
-'dijit/form/NumberSpinner'], function(declare, lang, aspect, on, ObjectStore, i18n, atomStore, FilteringSelect, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, template) {	
-	return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {				
+'dijit/form/NumberSpinner'], function(declare, lang, aspect, Stateful, Atom, ObjectStore, i18n, atomStore, FilteringSelect, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin, template) {	
+	return declare([Atom, _WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {				
 
-		templateString : template,
+		templateString : template,			
 
 		constructor : function(args) {
+			args = args || {};
 			lang.mixin(this, args);
-			this.i18n = i18n;
+			this.i18n = args.i18n || i18n;
+			this.store = args.store || atomStore;			
+		},
+		
+		_symbolSetter : function(symbol) {
+			this.symbol = symbol;
+			var p = this.store.query({symbol:  symbol}).number;
+			if(me.symbolInlineEditBox.get('value') != symbol)
+				me.symbolInlineEditBox.set('value', symbol);
+			if(me.zInlineEditBox.get('value') !=  p)
+				me.zInlineEditBox.set('value', p);
+		},
+		
+		_ZSetter : function(p) {
+			this.inherited();
+			var symbol = this.store.get(p).symbol;
+			if(me.symbolInlineEditBox.get('value') != symbol)
+				me.symbolInlineEditBox.set('value', symbol);
+			if(me.zInlineEditBox.get('value') !=  p)
+				me.zInlineEditBox.set('value', p);									
+		},
+		
+		_pSetter : function(p) {
+			this.inherited();
+			if(me.symbolInlineEditBox.get('value') != symbol)
+				me.symbolInlineEditBox.set('value', symbol);
+			if(me.zInlineEditBox.get('value') !=  p)
+				me.zInlineEditBox.set('value', p);
 		},
 
 		postCreate : function() {
 			
 			var me = this;
-			this.inherited(arguments);
+			me.inherited(arguments);
 			
-			var instantiatedSymbol = false, instantiatedZ = false;
-			var symbolInlineEditBox = me.symbolInlineEditBox;
-			var zInlineEditBox = me.zInlineEditBox;
+			var instantiatedSymbol = false, instantiatedZ = false;			
 			
-			symbolInlineEditBox.on('Change', function(symbol) {
-				var z = atomStore.get(symbol).number;
-				if(zInlineEditBox.get('value') != z)
-					zInlineEditBox.set('value', z);
-				if(me.aInlineEditBox.get('value') < z)
-					me.aInlineEditBox.set('value', z);
+			me.symbolInlineEditBox.on('Change', function(symbol) {
+				var z = me.store.get(symbol).number;
+				me.set('Z', z);
 			});
 			
-			zInlineEditBox.on('Change', function(z) {
-				var symbol = atomStore.query({number : me.zInlineEditBox.get('value')})[0].symbol;
-				if(symbolInlineEditBox.get('value') != symbol)				
-					symbolInlineEditBox.set('value', symbol);
-				if(me.aInlineEditBox.get('value') < z)
-					me.aInlineEditBox.set('value', z);
+			me.zInlineEditBox.on('Change', function(z) {
+				me.set('Z', z);
 			});
 			
-			aspect.after(symbolInlineEditBox, 'edit', function(value) {
+			aspect.after(me.symbolInlineEditBox, 'edit', function(value) {
 				if (!instantiatedSymbol) {
 					instantiatedSymbol = true;														
-					var widget = symbolInlineEditBox.wrapperWidget.editWidget;					
-					widget.set('store', atomStore);
+					var widget = me.symbolInlineEditBox.wrapperWidget.editWidget;					
+					widget.set('store', me.store);
 					widget.set('searchAttr', 'symbol');
+					me.symbolInlineEditBox.set('value', me.get('symbol'));
 				}
 			});
 			
-			aspect.after(zInlineEditBox, 'edit', function(value) {
+			aspect.after(me.zInlineEditBox, 'edit', function(value) {
 				if (!instantiatedZ) {
 					instantiatedZ = true;														
-					var widget = zInlineEditBox.wrapperWidget.editWidget;
-					widget.set('store', atomStore);
+					var widget = me.zInlineEditBox.wrapperWidget.editWidget;
+					widget.set('store', me.store);
 					widget.set('searchAttr', 'number');
+					me.zInlineEditBox.set('value', me.get('Z'));
 				}
 			});
-		}			
+		}
 		
 	});
 
