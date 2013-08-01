@@ -2,7 +2,7 @@ define(['dojo/_base/declare', // declare
 'dojo/_base/lang', 'dojo/Stateful' // Stateful
 ], function(declare, lang, Stateful) {
 
-	return declare(null, {
+	return declare(Stateful, {
 
 		nivel : 0,
 		orbital : '',

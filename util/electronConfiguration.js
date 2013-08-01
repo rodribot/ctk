@@ -8,14 +8,14 @@ define([], function() {
 
 		makeAufbauPrinciple : function() {
 			var matrix = [];
-			for (var nivel = 1, maxNivel = this.orbitals.length; nivel <= maxNivel; nivel++) {
+			for (var n = 1, maxNivel = this.orbitals.length; n <= maxNivel; n++) {
 				var row = [];
-				for (var orbitalIndex = 0; orbitalIndex < nivel; orbitalIndex++) {
+				for (var l = 0; l < n; l++) {
 					row.push({
-						nivel : nivel,
-						orbital : this.orbitals[orbitalIndex],
-						orbitalIndex : orbitalIndex,
-						capacity : this.orbitalsCapacity[orbitalIndex]
+						n : n,
+						l : l,
+						lLetter : this.orbitals[l],
+						eCapacity : this.orbitalsCapacity[l]
 					});
 				}
 				matrix.push(row);
@@ -31,15 +31,15 @@ define([], function() {
 				var j = 0;
 				while (aufbauPrinciple[i + j] && aufbauPrinciple[i + j][i - j]) {
 					var orbital = aufbauPrinciple[i + j][i - j];
-					e += orbital.capacity;
-					orbital.e = e;
+					e += orbital.eCapacity;
+					orbital.eTotal = e;
 					orbitals.push(orbital); ++j;
 				}
 				j = 0;
 				while (aufbauPrinciple[i + j + 1] && aufbauPrinciple[i + j + 1][i - j]) {				
 					var orbital = aufbauPrinciple[i + j + 1][i - j];
-					e += orbital.capacity;
-					orbital.e = e;
+					e += orbital.eCapacity;
+					orbital.eTotal = e;
 					orbitals.push(orbital); ++j;
 				}
 			}
