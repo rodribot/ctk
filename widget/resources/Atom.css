@@ -1,0 +1,14 @@
+.chemistry-atom-symbol {
+	font-size: 200%;
+	width: 40px;
+}
+
+.chemistry-atom-Z, .chemistry-atom-A {
+	width: 30px;
+	text-align: right;
+}
+
+.chemistry-atom-ionization {
+	width: 30px;
+	text-align: left;
+}

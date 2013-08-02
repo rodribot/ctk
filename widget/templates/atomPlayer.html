@@ -1,0 +1,19 @@
+<div class="chemistry chemistry-atom-player">
+	<input data-dojo-attach-point="secuenceHorizontalSlider" value="0"
+		type="range"
+		data-dojo-type="dijit/form/HorizontalSlider"
+		data-dojo-props="
+		minimum: 0,
+		maximum: 10,
+		discreteValues: 11">
+	<div class="center">
+		<button data-dojo-attach-point="stopButton"
+		data-dojo-type="dijit/form/Button"
+		>${i18n.STOP}
+		</button>
+		<button data-dojo-attach-point="playButton"
+		data-dojo-type="dijit/form/Button"
+		>${i18n.PLAY}
+		</button>
+	</div>
+</div>

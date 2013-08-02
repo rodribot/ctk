@@ -1,0 +1,25 @@
+<div class="chemistry chemistry-orbital-pane">
+	<div>
+	<h3>${i18n.QUANTUM_NUMBERS}</h3>			
+		<div class="quantum-number"><strong data-dojo-attach-point="nLabelNode">n</strong> : <span data-dojo-attach-point="nValueNode">${orbital.n}</span></div>
+		<div class="quantum-number"><strong data-dojo-attach-point="lLabelNode">ℓ</strong> : <span data-dojo-attach-point="lValueNode">${orbital.l}</span></div>
+		<div class="quantum-number"><strong data-dojo-attach-point="mlLabelNode">m<sub>ℓ</sub></strong> : <span data-dojo-attach-point="mlValueNode">${orbital.ml}</span></div>
+		<div class="quantum-number"><strong data-dojo-attach-point="msLabelNode">m<sub>s</sub></strong> : <span data-dojo-attach-point="msValueNode">${orbital.ms}</span></div>		
+	</div>
+	<table>
+		<tbody>
+			<tr data-dojo-attach-point="msTrNode">
+				<td data-dojo-attach-point="msTdNode">m<sub>s</sub></td>
+				<td>↑↓</td>
+				<td>↑↓</td>
+				<td>↑</td>
+			</tr>
+			<tr data-dojo-attach-point="mlTrNode">
+				<td data-dojo-attach-point="mlTdNode">m<sub>ℓ</sub></td>
+				<td>-1</td>
+				<td>0</td>
+				<td>+1</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

@@ -1,10 +1,9 @@
 define(['dojo/_base/declare', // declare
 'dojo/_base/lang', // lang
 'dojo/Deferred', // Deferred
-'./Orbital', // Orbital
 'dojo/Stateful', // Stateful
 './dictionary/orbitals' // orbitalsDictionary
-], function(declare, lang, Deferred, Orbital, Stateful, orbitalsDictionary) {
+], function(declare, lang, Deferred, Stateful, orbitalsDictionary) {
 
 	return declare(Stateful, {
 
@@ -36,8 +35,7 @@ define(['dojo/_base/declare', // declare
 
 			var deferred = new Deferred();
 
-			if (me._cacheElectronConfiguration) {
-				console.log('cached');
+			if (me._cacheElectronConfiguration) {				
 				deferred.resolve(me._cacheElectronConfiguration);
 				return deferred.promise;
 			}
@@ -48,9 +46,11 @@ define(['dojo/_base/declare', // declare
 				var electronConfiguration = [];
 				var _cacheElectronConfiguration = [];
 				var i = 0, orbital, mlArray, msArray;
-				var eUsed = me.e;
+				var eUsed = me.e, eUsedStart;
+								
 				do {					
 					
+					eUsedStart = eUsed;					
 					orbital = lang.clone(orbitalsDictionary[i]);
 					
 					mlArray = [];
@@ -60,44 +60,62 @@ define(['dojo/_base/declare', // declare
 					var mlEIndex = 0;
 					
 					while (mlIndex <= orbital.l) {
-						if (eUsed > 0) {
+						if (eUsed > 0) {							
 							msArray.push(1);
-							++mlEIndex;
+							++mlEIndex;							
 							--eUsed;
 						} else {
 							msArray.push(0);
 						}
 						mlArray.push(mlIndex++);
-					}
+					}					
 					if (eUsed > 0) {
-						mlEIndex = 0;
-						while (eUsed > 0) {
+						mlEIndex = 0;						
+						do {							
 							msArray[mlEIndex]++;
 							++mlEIndex;
-							--eUsed;
-						}
-						--mlEIndex;
-					}										
+							--eUsed;														
+						} while (eUsed > 0 && mlEIndex < msArray.length)								
+					}
+					--mlEIndex;
 
 					orbital.mlEIndex = mlEIndex;
 					orbital.ml = mlArray[mlEIndex];
 					orbital.ms = msArray[mlEIndex] > 1 ? -0.5 : +0.5;
 					orbital.mlArray = mlArray;
-					orbital.msArray = msArray;					
+					orbital.msArray = msArray;
+					orbital.eUsed = eUsedStart - eUsed;					
 
 					electronConfiguration.push(orbital);
 					_cacheElectronConfiguration.push(orbital);
 					
-					++i;
-					
-					console.log('while (me.e > orbitalsDictionary[i].eTotal)', me.e, orbitalsDictionary[i].eTotal, orbitalsDictionary[i])
-				} while (me.e > orbitalsDictionary[i].eTotal);
+					++i;					
+				} while (eUsed);
 
 				me._cacheElectronConfiguration = _cacheElectronConfiguration;
 				deferred.resolve(electronConfiguration);
 				
 			}, 0);
 			
+			return deferred.promise;
+		},
+		
+		computeValenceElectrons : function() {
+			var me = this;
+			var deferred = new Deferred();
+			me.computeElectronConfiguration().then(function(electronConfiguration) {
+				var maxNivel = Number.MIN_VALUE, eValence = 0, n;
+				for(var i in electronConfiguration) {
+					n = electronConfiguration[i].n;
+					if(n > maxNivel) {
+						maxNivel = n;
+						eValence = electronConfiguration[i].eUsed;
+					} else if(n == maxNivel) {
+						eValence += electronConfiguration[i].eUsed;
+					}
+				}
+				deferred.resolve(eValence);
+			});
 			return deferred.promise;
 		},
 
@@ -123,9 +141,10 @@ define(['dojo/_base/declare', // declare
 
 		_pSetter : function(p) {
 			p = Number(p);
-			this.e = p - this.p + this.e;			
+			var ionization = this.get('ionization');		
 			this.p = p;
 			this.set('A', this.get('A'));
+			this.set('ionization', ionization);			
 			delete this._cacheElectronConfiguration;
 		},
 
@@ -133,8 +152,10 @@ define(['dojo/_base/declare', // declare
 			return this.p - this.e;
 		},
 		
-		_ionizationSetter : function(ionization) {			
-			this.e = this.p - Number(ionization);
+		_ionizationSetter : function(ionization) {
+			if(this.e != this.p - Number(ionization))
+				this.set('e', this.p - Number(ionization));						
+			delete this._cacheElectronConfiguration;
 		},
 		
 		_eGetter : function() {
@@ -142,7 +163,7 @@ define(['dojo/_base/declare', // declare
 		},
 		
 		_eSetter : function(e) {
-			this.e = e;
+			this.e = e;			
 			this.set('ionization', this.get('ionization'));
 		},
 		

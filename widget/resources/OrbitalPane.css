@@ -1,0 +1,22 @@
+.chemistry-orbital-pane table {
+	border-collapse:collapse;
+	width: 100%;
+}
+.chemistry-orbital-pane table,
+.chemistry-orbital-pane td {
+	border: 1px solid black;
+	text-align: center;
+}
+
+.chemistry-orbital-pane .quantum-number {
+	padding: 0 0 5px 0;
+	margin: 0;
+	border: 0;
+	width: 25%;
+	float: left;
+	text-align: center;
+}
+
+.chemistry-orbital-pane .invisible {
+	display: none;
+}

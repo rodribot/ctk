@@ -1,23 +1,12 @@
+@import url('./Atom.css');
+@import url('./AufbauPrinciple.css');
+@import url('./ElectronConfiguration.css');
+@import url('./OrbitalPane.css');
+@import url('./AtomPlayer.css');
+
 .chemistry {
-	padding: 5px;
-	background-color: #FFFFDD;
+	padding: 5px;	
 	border-spacing: 0;
-	/*border: 1px solid #DDDD99;*/	
-}
-
-.chemistry-atom-symbol {
-	font-size: 200%;
-	width: 40px;
-}
-
-.chemistry-atom-Z, .chemistry-atom-A {
-	width: 30px;
-	text-align: right;
-}
-
-.chemistry-atom-ionization {
-	width: 30px;
-	text-align: left;
 }
 
 .chemistry td span {

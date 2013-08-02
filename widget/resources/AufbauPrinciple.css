@@ -1,0 +1,27 @@
+.chemistry-aufbauPrinciple table td {
+	width: 1.5em;
+	text-align: center;
+}
+
+.chemistry-aufbauPrinciple .futuro {
+	color : #ccc;
+}
+
+.chemistry-aufbauPrinciple .active {
+	font-weight: bold;
+}
+
+.chemistry-aufbauPrinciple .active-n {
+	font-weight: bold;
+	color: #148D0B;	
+}
+
+.chemistry-aufbauPrinciple .active-l {
+	font-weight: bold;
+	color : #069;
+}
+
+.chemistry-aufbauPrinciple .used {
+	text-decoration: line-through;
+}
+
